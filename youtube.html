@@ -39,268 +39,290 @@
       color: #ad1457;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 3.5rem;
+      margin-bottom: 2.8rem;
     }
 
-    /* ── Podium ── */
-    .podium-wrap {
+    /* ── layout ── */
+    .chart-wrap {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
+      gap: 36px;
+      width: 100%;
+      max-width: 580px;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 3rem;
     }
 
-    .podium-item {
+    /* ── donut ── */
+    .donut-container {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      flex-shrink: 0;
+    }
+
+    .donut-container svg {
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 6px 18px rgba(194,24,91,0.18));
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      cursor: pointer;
-    }
-
-    /* info card above block */
-    .info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: rise 0.5s ease forwards;
-    }
-    .first  .info { animation-delay: 0.1s; }
-    .second .info { animation-delay: 0.25s; }
-    .third  .info { animation-delay: 0.4s; }
-
-    @keyframes rise {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .medal {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .center-total {
+      font-size: 2.3rem;
       font-weight: bold;
-      color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .gold   { background: linear-gradient(135deg, #FFD700, #FFA000); }
-    .silver { background: linear-gradient(135deg, #C0C0C0, #9E9E9E); }
-    .bronze { background: linear-gradient(135deg, #CD7F32, #8D5524); }
-
-    .ch-name {
-      font-size: 0.78rem;
-      color: #5d0037;
-      text-align: center;
-      max-width: 120px;
-      line-height: 1.4;
-      word-break: keep-all;
-    }
-
-    .ch-views {
-      font-size: 0.7rem;
-      color: #ad1457;
-      letter-spacing: 0.05em;
-    }
-
-    /* podium blocks */
-    .block {
-      width: 120px;
-      border-radius: 8px 8px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: filter 0.2s, transform 0.2s;
-    }
-    .podium-item:hover .block {
-      filter: brightness(1.08);
-      transform: translateY(-4px);
-    }
-    .first  .block { height: 190px; background: linear-gradient(160deg, #FFE082, #FFB300); }
-    .second .block { height: 69px;  background: linear-gradient(160deg, #E0E0E0, #9E9E9E); }
-    .third  .block { height: 60px;  background: linear-gradient(160deg, #FFCC80, #A1887F); }
-
-    .block-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .block-rank {
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: rgba(255,255,255,0.65);
+      color: #c2185b;
       line-height: 1;
+      transition: all 0.2s;
     }
 
-    .block-count {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.88);
-      letter-spacing: 0.04em;
-    }
-
-    .click-hint {
-      font-size: 0.78rem;
-      color: #ad1457;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.6rem;
-    }
-
-    /* ── Remaining ranks ── */
-    .rest-title {
-      font-size: 0.75rem;
+    .center-label {
+      font-size: 0.6rem;
       color: #ad1457;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 1rem;
-      align-self: center;
+      margin-top: 5px;
     }
 
-    .rest-list {
-      width: 100%;
-      max-width: 400px;
+    .center-name {
+      font-size: 0.72rem;
+      color: #5d0037;
+      text-align: center;
+      max-width: 88px;
+      line-height: 1.4;
+      margin-top: 7px;
+      min-height: 2.1em;
+      word-break: keep-all;
+    }
+
+    /* ── channel list ── */
+    .channel-list {
+      flex: 1;
+      min-width: 200px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 7px;
     }
 
-    .rest-item {
-      background: rgba(255,255,255,0.45);
-      border-radius: 12px;
-      padding: 12px 18px;
+    .ch-item {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
+      padding: 9px 14px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 10px;
+      transition: background 0.2s, transform 0.18s, opacity 0.2s;
       opacity: 0;
-      transform: translateX(0);
-      animation: slide 0.4s ease forwards;
+      transform: translateX(18px);
     }
-    .rest-item:nth-child(1) { animation-delay: 0.55s; }
-    .rest-item:nth-child(2) { animation-delay: 0.65s; }
-    .rest-item:nth-child(3) { animation-delay: 0.75s; }
-    .rest-item:nth-child(4) { animation-delay: 0.85s; }
+    .ch-item.visible { opacity: 1; transform: translateX(0); }
+    .ch-item.dimmed  { opacity: 0.3; }
+    .ch-item.lit     { background: rgba(255,255,255,0.66); transform: translateX(4px); }
 
-    @keyframes slide {
-      to { opacity: 1; transform: translateX(0); }
+    .ch-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
-    .rest-rank {
-      font-size: 1rem;
+    .ch-info { flex: 1; min-width: 0; }
+
+    .ch-name {
+      font-size: 0.82rem;
+      color: #5d0037;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ch-link-icon {
+      font-size: 0.65rem;
+      color: #c2185b;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .ch-bar-bg {
+      margin-top: 5px;
+      height: 3px;
+      background: rgba(194,24,91,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .ch-bar {
+      height: 100%;
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .ch-right { text-align: right; flex-shrink: 0; }
+
+    .ch-count {
+      font-size: 0.82rem;
       font-weight: bold;
       color: #c2185b;
-      min-width: 24px;
     }
 
-    .rest-name {
-      flex: 1;
-      font-size: 0.85rem;
-      color: #5d0037;
-    }
+    .ch-pct { font-size: 0.65rem; color: #ad1457; }
 
-    .rest-views {
-      font-size: 0.75rem;
-      color: #ad1457;
+    /* ── segment ── */
+    .seg {
+      cursor: pointer;
+      transition: stroke-width 0.18s ease, opacity 0.18s ease;
     }
+    .seg.dimmed { opacity: 0.22; }
+    .seg:hover  { stroke-width: 28 !important; }
   </style>
 </head>
 <body>
 
 <a href="screentime.html" class="back">← Screentime</a>
-<p class="click-hint">click to visit the website!</p>
 <h1>YouTube</h1>
 <p class="subtitle">Top Channels · April 2026</p>
 
-<div class="podium-wrap">
-
-  <!-- 2nd -->
-  <div class="podium-item second" id="p2">
-    <div class="info">
-      <div class="medal silver">2</div>
-      <div class="ch-name" id="name2"></div>
-      <div class="ch-views">41 plays</div>
+<div class="chart-wrap">
+  <div class="donut-container">
+    <svg id="donutSvg" width="210" height="210" viewBox="0 0 210 210"></svg>
+    <div class="donut-center">
+      <div class="center-total" id="cTotal">307</div>
+      <div class="center-label" id="cLabel">total plays</div>
+      <div class="center-name"  id="cName"></div>
     </div>
-    <div class="block"><div class="block-inner"><span class="block-rank">2</span><span class="block-count">41회</span></div></div>
   </div>
-
-  <!-- 1st -->
-  <div class="podium-item first" id="p1">
-    <div class="info">
-      <div class="medal gold">1</div>
-      <div class="ch-name" id="name1"></div>
-      <div class="ch-views">113 plays</div>
-    </div>
-    <div class="block"><div class="block-inner"><span class="block-rank">1</span><span class="block-count">113회</span></div></div>
-  </div>
-
-  <!-- 3rd -->
-  <div class="podium-item third" id="p3">
-    <div class="info">
-      <div class="medal bronze">3</div>
-      <div class="ch-name" id="name3"></div>
-      <div class="ch-views">36 plays</div>
-    </div>
-    <div class="block"><div class="block-inner"><span class="block-rank">3</span><span class="block-count">36회</span></div></div>
-  </div>
-
+  <div class="channel-list" id="channelList"></div>
 </div>
 
-<p class="rest-title">그 외 채널</p>
-<div class="rest-list" id="restList"></div>
-
 <script>
-  const top3 = [
-    {
-      id: 'p1',
-      nameEl: 'name1',
-      url: 'https://www.youtube.com/@미녀천명모으기',
-      name: '미녀천명모으기'
-    },
-    {
-      id: 'p2',
-      nameEl: 'name2',
-      url: 'https://www.youtube.com/@nannikas2',
-      name: '나니까 NANNIKA'
-    },
-    {
-      id: 'p3',
-      nameEl: 'name3',
-      url: 'https://www.youtube.com/@' + decodeURIComponent('%EB%82%98%EB%9D%A4%EB%8D%B0%EC%98%88'),
-      name: decodeURIComponent('%EB%82%98%EB%9D%A4%EB%8D%B0%EC%98%88')
-    }
-  ];
+const channels = [
+  { name: '미녀천명모으기', views: 113, url: 'https://www.youtube.com/@미녀천명모으기' },
+  { name: '나니까 NANNIKA', views: 41,  url: 'https://www.youtube.com/@nannikas2' },
+  { name: '나띤데예',       views: 36,  url: 'https://www.youtube.com/@나띤데예' },
+  { name: '예능 뭐볼래',   views: 34,  url: null },
+  { name: 'Hearts2Hearts', views: 31,  url: null },
+  { name: 'eson',          views: 27,  url: null },
+  { name: '패션탐정냥',    views: 25,  url: null }
+];
 
-  top3.forEach(ch => {
-    document.getElementById(ch.nameEl).textContent = ch.name;
-    document.getElementById(ch.id).addEventListener('click', () => {
-      window.open(ch.url, '_blank');
-    });
+const COLORS = ['#880e4f','#c2185b','#e91e63','#f06292','#f48fb1','#ff80ab','#ff4081'];
+const total  = channels.reduce((s, c) => s + c.views, 0);
+
+const CX = 105, CY = 105, R = 75, SW = 22;
+const CIRC = 2 * Math.PI * R;
+const GAP  = 5;
+
+const svg    = document.getElementById('donutSvg');
+const listEl = document.getElementById('channelList');
+const cTotal = document.getElementById('cTotal');
+const cLabel = document.getElementById('cLabel');
+const cName  = document.getElementById('cName');
+
+const segEls  = [];
+const itemEls = [];
+let cumOff = 0;
+
+channels.forEach((ch, i) => {
+  const pct     = ch.views / total;
+  const sliceLen = pct * CIRC;
+  const dashLen  = Math.max(0, sliceLen - GAP);
+  const dashOff  = cumOff;
+  cumOff += sliceLen;
+
+  // SVG segment
+  const seg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  seg.setAttribute('cx', CX);
+  seg.setAttribute('cy', CY);
+  seg.setAttribute('r',  R);
+  seg.setAttribute('fill', 'none');
+  seg.setAttribute('stroke', COLORS[i]);
+  seg.setAttribute('stroke-width', SW);
+  seg.setAttribute('stroke-linecap', 'butt');
+  seg.setAttribute('stroke-dashoffset', -dashOff);
+  seg.setAttribute('stroke-dasharray', `0 ${CIRC}`);
+  seg.classList.add('seg');
+  svg.appendChild(seg);
+  segEls.push(seg);
+
+  setTimeout(() => {
+    seg.style.transition = `stroke-dasharray 0.9s cubic-bezier(0.4,0,0.2,1) ${i * 0.1}s`;
+    seg.setAttribute('stroke-dasharray', `${dashLen} ${CIRC - dashLen}`);
+  }, 80);
+
+  // List item
+  const div = document.createElement('div');
+  div.className = 'ch-item';
+  div.innerHTML = `
+    <div class="ch-dot" style="background:${COLORS[i]}"></div>
+    <div class="ch-info">
+      <div class="ch-name">${ch.name}${ch.url ? '<span class="ch-link-icon">↗</span>' : ''}</div>
+      <div class="ch-bar-bg">
+        <div class="ch-bar" style="background:${COLORS[i]};width:${pct * 100}%"></div>
+      </div>
+    </div>
+    <div class="ch-right">
+      <div class="ch-count">${ch.views}</div>
+      <div class="ch-pct">${(pct * 100).toFixed(0)}%</div>
+    </div>
+  `;
+
+  if (ch.url) {
+    div.style.cursor = 'pointer';
+    div.addEventListener('click', () => window.open(ch.url, '_blank'));
+  }
+
+  listEl.appendChild(div);
+  itemEls.push(div);
+  setTimeout(() => div.classList.add('visible'), 120 + i * 75);
+});
+
+// Animate bars
+setTimeout(() => {
+  document.querySelectorAll('.ch-bar').forEach(b => b.style.transform = 'scaleX(1)');
+}, 350);
+
+// Hover interactions
+function highlight(idx) {
+  segEls.forEach((s, j)  => s.classList.toggle('dimmed', j !== idx));
+  itemEls.forEach((it, j) => {
+    it.classList.toggle('dimmed', j !== idx);
+    it.classList.toggle('lit',    j === idx);
   });
+  cTotal.textContent = channels[idx].views;
+  cLabel.textContent = 'plays';
+  cName.textContent  = channels[idx].name;
+}
 
-  const rest = [
-    { rank: 4, name: '예능 뭐볼래', views: 34 },
-    { rank: 5, name: 'Hearts2Hearts', views: 31 },
-    { rank: 6, name: 'eson', views: 27 },
-    { rank: 7, name: '패션탐정냥', views: 25 }
-  ];
+function reset() {
+  segEls.forEach(s  => s.classList.remove('dimmed'));
+  itemEls.forEach(it => { it.classList.remove('dimmed'); it.classList.remove('lit'); });
+  cTotal.textContent = total;
+  cLabel.textContent = 'total plays';
+  cName.textContent  = '';
+}
 
-  const list = document.getElementById('restList');
-  rest.forEach(ch => {
-    const div = document.createElement('div');
-    div.className = 'rest-item';
-    div.innerHTML = `
-      <span class="rest-rank">${ch.rank}</span>
-      <span class="rest-name">${ch.name}</span>
-      <span class="rest-views">${ch.views} plays</span>
-    `;
-    list.appendChild(div);
-  });
+segEls.forEach((s, i) => {
+  s.addEventListener('mouseenter', () => highlight(i));
+  s.addEventListener('mouseleave', reset);
+});
+itemEls.forEach((it, i) => {
+  it.addEventListener('mouseenter', () => highlight(i));
+  it.addEventListener('mouseleave', reset);
+});
 </script>
 
 </body>
