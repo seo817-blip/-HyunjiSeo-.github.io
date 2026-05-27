@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Walks — My April</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0, #ffd1dc);
+      font-family: 'Georgia', 'Gowun Dodum', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 52px;
+    }
+
+    a.back {
+      align-self: flex-start;
+      color: #c2185b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    a.back:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #c2185b;
+      letter-spacing: 0.08em;
+      margin-bottom: 2rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 3rem;
+      margin-bottom: 2.5rem;
+    }
+    .stat { text-align: center; }
+    .stat .val {
+      display: block;
+      font-size: 1.7rem;
+      font-weight: bold;
+      color: #c2185b;
+    }
+    .stat .lbl {
+      display: block;
+      font-size: 0.72rem;
+      color: #880e4f;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+
+    .chart-wrap {
+      background: rgba(255,255,255,0.45);
+      border-radius: 18px;
+      padding: 16px 16px 12px;
+      box-shadow: 0 4px 24px rgba(194,24,91,0.1);
+      width: 100%;
+      max-width: 920px;
+    }
+    canvas { display: block; width: 100%; }
+
+    #tooltip {
+      position: fixed;
+      background: #c2185b;
+      color: #fff;
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.12s;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back">← My April</a>
+<h1>Walks in April</h1>
+
+<div class="stats">
+  <div class="stat"><span class="val" id="sTotal"></span><span class="lbl">Total Steps</span></div>
+  <div class="stat"><span class="val" id="sAvg"></span><span class="lbl">Daily Average</span></div>
+  <div class="stat"><span class="val" id="sBest"></span><span class="lbl">Best Day</span></div>
+</div>
+
+<div class="chart-wrap">
+  <canvas id="c"></canvas>
+</div>
+<div id="tooltip"></div>
+
+<script>
+const DATA = [
+  { date:'Apr 1',  i:0,  steps:15902 },
+  { date:'Apr 2',  i:1,  steps:10195 },
+  { date:'Apr 3',  i:2,  steps:5508  },
+  { date:'Apr 4',  i:3,  steps:21448 },
+  { date:'Apr 5',  i:4,  steps:12073 },
+  { date:'Apr 6',  i:5,  steps:11622 },
+  { date:'Apr 7',  i:6,  steps:14667 },
+  { date:'Apr 8',  i:7,  steps:11390 },
+  { date:'Apr 9',  i:8,  steps:null  },
+  { date:'Apr 10', i:9,  steps:7098  },
+  { date:'Apr 11', i:10, steps:6089  },
+  { date:'Apr 12', i:11, steps:12329 },
+  { date:'Apr 13', i:12, steps:11539 },
+  { date:'Apr 14', i:13, steps:14188 },
+  { date:'Apr 15', i:14, steps:8513  },
+  { date:'Apr 16', i:15, steps:null  },
+  { date:'Apr 17', i:16, steps:8693  },
+  { date:'Apr 18', i:17, steps:5277  },
+  { date:'Apr 19', i:18, steps:9201  },
+  { date:'Apr 20', i:19, steps:8480  },
+  { date:'Apr 21', i:20, steps:8459  },
+  { date:'Apr 22', i:21, steps:6664  },
+  { date:'Apr 23', i:22, steps:null  },
+  { date:'Apr 24', i:23, steps:6139  },
+  { date:'Apr 25', i:24, steps:6922  },
+  { date:'Apr 26', i:25, steps:12393 },
+  { date:'Apr 27', i:26, steps:8256  },
+  { date:'Apr 28', i:27, steps:7503  },
+  { date:'Apr 29', i:28, steps:12434 },
+  { date:'Apr 30', i:29, steps:5568  },
+];
+
+// Stats
+const valid = DATA.filter(d => d.steps !== null);
+const total = valid.reduce((s, d) => s + d.steps, 0);
+const avg   = Math.round(total / valid.length);
+const best  = valid.reduce((m, d) => d.steps > m.steps ? d : m);
+
+document.getElementById('sTotal').textContent = total.toLocaleString();
+document.getElementById('sAvg').textContent   = avg.toLocaleString();
+document.getElementById('sBest').textContent  = best.date;
+
+// Canvas setup
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const DPR    = window.devicePixelRatio || 1;
+const LW = 880, LH = 370;
+canvas.width  = LW * DPR;
+canvas.height = LH * DPR;
+ctx.scale(DPR, DPR);
+
+const P  = { top: 75, right: 24, bottom: 52, left: 56 };
+const CW = LW - P.left - P.right;
+const CH = LH - P.top  - P.bottom;
+const N    = 30;
+const STEP = CW / N;
+const YMAX = 22000;
+
+function bx(i)        { return P.left + i * STEP + STEP / 2; }
+function stepsToY(s)  { return P.top + CH - (s / YMAX) * CH; }
+function barH(steps)  { return (steps / YMAX) * CH; }
+
+// Walk animation waypoints: virtual off-screen start/end ensure seamless loop
+const walkable = DATA.filter(d => d.steps !== null);
+const walkPts = [
+  { i: -3, steps: walkable[0].steps },          // off-screen left (enter)
+  ...walkable,
+  { i: 33, steps: walkable[walkable.length - 1].steps }, // off-screen right (exit)
+];
+
+// Interpolate steps for missing days
+function interp(i) {
+  let prev = null, next = null;
+  for (let j = i - 1; j >= 0; j--) if (DATA[j].steps !== null) { prev = DATA[j]; break; }
+  for (let j = i + 1; j < DATA.length; j++) if (DATA[j].steps !== null) { next = DATA[j]; break; }
+  if (!prev) return next.steps;
+  if (!next) return prev.steps;
+  const t = (i - prev.i) / (next.i - prev.i);
+  return Math.round(prev.steps + t * (next.steps - prev.steps));
+}
+
+// Build full 30-point array (missing days interpolated)
+const PTS = DATA.map(d => ({
+  x: bx(d.i),
+  y: stepsToY(d.steps !== null ? d.steps : interp(d.i))
+}));
+
+// Draw Catmull-Rom smooth path through pts array
+function smoothPath(pts) {
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+  }
+}
+
+// Draw chart (called every frame)
+function drawChart() {
+  ctx.clearRect(0, 0, LW, LH);
+
+  const BASE = P.top + CH;
+
+  // ── Fill below ridge (drawn first, behind grid) ──
+  ctx.beginPath();
+  ctx.moveTo(PTS[0].x, BASE);
+  ctx.lineTo(PTS[0].x, PTS[0].y);
+  for (let i = 0; i < PTS.length - 1; i++) {
+    const p0 = PTS[Math.max(0, i - 1)];
+    const p1 = PTS[i];
+    const p2 = PTS[i + 1];
+    const p3 = PTS[Math.min(PTS.length - 1, i + 2)];
+    ctx.bezierCurveTo(
+      p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6,
+      p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6,
+      p2.x, p2.y
+    );
+  }
+  ctx.lineTo(PTS[PTS.length - 1].x, BASE);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(233,30,99,0.35)';
+  ctx.fill();
+
+  // Grid lines + Y labels
+  ctx.strokeStyle = 'rgba(194,24,91,0.18)';
+  ctx.lineWidth   = 1;
+  ctx.fillStyle   = '#ad1457';
+  ctx.font        = '11px Georgia';
+  ctx.textAlign   = 'right';
+  for (let v = 0; v <= 20000; v += 5000) {
+    const y = stepsToY(v);
+    ctx.beginPath();
+    ctx.moveTo(P.left, y);
+    ctx.lineTo(LW - P.right, y);
+    ctx.stroke();
+    ctx.fillText(v === 0 ? '0' : v / 1000 + 'k', P.left - 7, y + 4);
+  }
+
+  // Average dashed line
+  const avgY = stepsToY(avg);
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = 'rgba(194,24,91,0.5)';
+  ctx.lineWidth   = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(P.left, avgY);
+  ctx.lineTo(LW - P.right, avgY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(194,24,91,0.7)';
+  ctx.font      = '10px Georgia';
+  ctx.textAlign = 'left';
+  ctx.fillText('avg', LW - P.right + 4, avgY + 4);
+
+  // Mountain ridge line
+  ctx.beginPath();
+  smoothPath(PTS);
+  ctx.strokeStyle = '#c2185b';
+  ctx.lineWidth   = 2.2;
+  ctx.stroke();
+
+  // Shimmer
+  ctx.beginPath();
+  smoothPath(PTS);
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+  ctx.lineWidth   = 1;
+  ctx.stroke();
+
+  // Dots on real data points
+  for (const d of DATA) {
+    if (!d.steps) continue;
+    ctx.beginPath();
+    ctx.arc(bx(d.i), stepsToY(d.steps), 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#c2185b';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(bx(d.i), stepsToY(d.steps), 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+  }
+
+  // X axis labels
+  ctx.fillStyle = '#880e4f';
+  ctx.font      = '10px Georgia';
+  ctx.textAlign = 'center';
+  [1, 5, 10, 15, 20, 25, 30].forEach(d => {
+    ctx.fillText(d, bx(d - 1), LH - P.bottom + 16);
+  });
+
+  // Axis baseline
+  ctx.strokeStyle = 'rgba(194,24,91,0.3)';
+  ctx.lineWidth   = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(P.left, BASE);
+  ctx.lineTo(LW - P.right, BASE);
+  ctx.stroke();
+
+  // Month label
+  ctx.fillStyle = '#ad1457';
+  ctx.font      = '11px Georgia';
+  ctx.textAlign = 'center';
+  ctx.fillText('April 2026', LW / 2, LH - 5);
+}
+
+// Stick figure — anchor y is feet level (top of bar)
+function drawFigure(x, y, frame, steps) {
+  const C = '#7b003c';
+  ctx.save();
+  ctx.strokeStyle = C;
+  ctx.fillStyle   = C;
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  // Shadow
+  ctx.fillStyle = 'rgba(123,0,60,0.15)';
+  ctx.beginPath();
+  ctx.ellipse(x, y + 1, 12, 3.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = C;
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(x, y - 32, 6.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Body
+  ctx.beginPath();
+  ctx.moveTo(x, y - 25);
+  ctx.lineTo(x, y - 13);
+  ctx.stroke();
+
+  if (frame === 0) {
+    // right arm up-forward, left arm back; left leg forward, right leg back
+    ctx.beginPath();
+    ctx.moveTo(x, y - 22); ctx.lineTo(x + 9,  y - 29);
+    ctx.moveTo(x, y - 22); ctx.lineTo(x - 9,  y - 15);
+    ctx.moveTo(x, y - 13); ctx.lineTo(x - 8,  y);
+    ctx.lineTo(x - 11, y);
+    ctx.moveTo(x, y - 13); ctx.lineTo(x + 6,  y - 7);
+    ctx.lineTo(x + 8,  y - 7);
+    ctx.stroke();
+  } else {
+    // left arm up-forward, right arm back; right leg forward, left leg back
+    ctx.beginPath();
+    ctx.moveTo(x, y - 22); ctx.lineTo(x - 9,  y - 29);
+    ctx.moveTo(x, y - 22); ctx.lineTo(x + 9,  y - 15);
+    ctx.moveTo(x, y - 13); ctx.lineTo(x + 8,  y);
+    ctx.lineTo(x + 11, y);
+    ctx.moveTo(x, y - 13); ctx.lineTo(x - 6,  y - 7);
+    ctx.lineTo(x - 8,  y - 7);
+    ctx.stroke();
+  }
+
+  // Step count label above head
+  if (steps !== null) {
+    ctx.fillStyle = '#880e4f';
+    ctx.font      = 'bold 10px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText(steps.toLocaleString(), x, y - 42);
+  }
+
+  ctx.restore();
+}
+
+// Animation loop
+let prog   = 0;
+let lastTs = null;
+const SPEED = 1.0; // waypoints per second
+
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min((ts - lastTs) / 1000, 0.05);
+  lastTs = ts;
+
+  prog += SPEED * dt;
+  if (prog >= walkPts.length) prog -= walkPts.length;
+
+  const idx  = Math.floor(prog) % walkPts.length;
+  const t    = prog - Math.floor(prog);
+  const nidx = (idx + 1) % walkPts.length;
+
+  const figX  = bx(walkPts[idx].i)   + t * (bx(walkPts[nidx].i)   - bx(walkPts[idx].i));
+  const figY  = stepsToY(walkPts[idx].steps) + t * (stepsToY(walkPts[nidx].steps) - stepsToY(walkPts[idx].steps));
+  const frame = Math.floor(prog * 5) % 2;
+
+  // Determine current steps for label (only show when on a real bar)
+  const isReal = walkPts[idx].i >= 0 && walkPts[idx].i <= 29;
+  const labelSteps = isReal ? walkPts[idx].steps : null;
+
+  drawChart();
+  drawFigure(figX, figY, frame, labelSteps);
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// Tooltip on hover
+const tip = document.getElementById('tooltip');
+canvas.addEventListener('mousemove', e => {
+  const r  = canvas.getBoundingClientRect();
+  const mx = (e.clientX - r.left) * (LW / r.width);
+  let closest = null, minDist = Infinity;
+  for (const d of DATA) {
+    if (!d.steps) continue;
+    const dist = Math.abs(mx - bx(d.i));
+    if (dist < minDist) { minDist = dist; closest = d; }
+  }
+  if (closest && minDist < STEP) {
+    tip.style.opacity = '1';
+    tip.style.left    = e.clientX + 14 + 'px';
+    tip.style.top     = e.clientY - 12 + 'px';
+    tip.textContent   = `${closest.date}: ${closest.steps.toLocaleString()} steps`;
+  } else {
+    tip.style.opacity = '0';
+  }
+});
+canvas.addEventListener('mouseleave', () => tip.style.opacity = '0');
+</script>
+
+</body>
+</html>

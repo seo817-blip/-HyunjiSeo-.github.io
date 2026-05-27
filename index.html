@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My April</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #fce4ec, #f8bbd0, #ffd1dc);
+        font-family: 'Georgia', 'Gowun Dodum', serif;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 4rem;
+        color: #c2185b;
+        letter-spacing: 0.1em;
+        margin-bottom: 3rem;
+        text-shadow: 2px 2px 6px rgba(194, 24, 91, 0.15);
+      }
+
+      .icons {
+        display: flex;
+        gap: 3.5rem;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .icon-item:hover {
+        transform: translateY(-7px);
+      }
+
+      .icon-item svg {
+        width: 72px;
+        height: 72px;
+        filter: drop-shadow(1px 2px 5px rgba(194, 24, 91, 0.2));
+      }
+
+      .icon-item span {
+        font-size: 0.8rem;
+        color: #880e4f;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>My April</h1>
+      <div class="icons">
+
+        <!-- Screentime: Smartphone -->
+        <div class="icon-item" onclick="location.href='screentime.html'">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="#c2185b" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="17" y="5" width="30" height="54" rx="5"/>
+            <rect x="21" y="11" width="22" height="36" rx="2"/>
+            <circle cx="32" cy="53" r="2.5" fill="#c2185b" stroke="none"/>
+            <line x1="27" y1="8" x2="37" y2="8"/>
+          </svg>
+          <span>Screentime</span>
+        </div>
+
+        <!-- Music: Beamed eighth notes -->
+        <div class="icon-item" onclick="location.href='music.html'">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="#c2185b" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <!-- note heads -->
+            <ellipse cx="19" cy="46" rx="8" ry="5.5" transform="rotate(-18,19,46)" fill="#c2185b" stroke="none"/>
+            <ellipse cx="43" cy="40" rx="8" ry="5.5" transform="rotate(-18,43,40)" fill="#c2185b" stroke="none"/>
+            <!-- stems -->
+            <line x1="26" y1="43" x2="26" y2="16"/>
+            <line x1="50" y1="37" x2="50" y2="10"/>
+            <!-- beam -->
+            <line x1="26" y1="16" x2="50" y2="10" stroke-width="4"/>
+          </svg>
+          <span>Music</span>
+        </div>
+
+        <!-- Walks: Walking stick figure -->
+        <div class="icon-item" onclick="location.href='walks.html'">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="#c2185b" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <!-- head -->
+            <circle cx="36" cy="10" r="6" fill="#c2185b" stroke="none"/>
+            <!-- torso -->
+            <line x1="34" y1="16" x2="30" y2="34"/>
+            <!-- arms: left arm back, right arm forward -->
+            <line x1="32" y1="23" x2="20" y2="30"/>
+            <line x1="32" y1="21" x2="44" y2="17"/>
+            <!-- legs: left leg forward, right leg back -->
+            <line x1="30" y1="34" x2="18" y2="52"/>
+            <line x1="30" y1="34" x2="42" y2="50"/>
+            <!-- feet -->
+            <line x1="18" y1="52" x2="12" y2="55"/>
+            <line x1="42" y1="50" x2="48" y2="53"/>
+          </svg>
+          <span>Walks</span>
+        </div>
+
+        <!-- Places: Map pin -->
+        <div class="icon-item" onclick="location.href='places.html'">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="#c2185b" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 6C22 6 14 14 14 24c0 14 18 34 18 34s18-20 18-34c0-10-8-18-18-18z"/>
+            <circle cx="32" cy="24" r="6" fill="#c2185b" stroke="none"/>
+          </svg>
+          <span>Places</span>
+        </div>
+
+        <!-- Expenditure: Wallet -->
+        <div class="icon-item" onclick="location.href='expenditure.html'">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="#c2185b" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <!-- wallet body -->
+            <rect x="6" y="18" width="52" height="34" rx="5"/>
+            <!-- top flap seam -->
+            <line x1="6" y1="28" x2="58" y2="28"/>
+            <!-- coin pocket -->
+            <rect x="36" y="28" width="22" height="18" rx="4"/>
+            <!-- coin in pocket -->
+            <circle cx="47" cy="37" r="5" fill="#c2185b" stroke="none"/>
+            <!-- card lines on left side -->
+            <line x1="12" y1="35" x2="30" y2="35"/>
+            <line x1="12" y1="42" x2="26" y2="42"/>
+          </svg>
+          <span>Expenditure</span>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

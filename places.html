@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Places — My April</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0, #ffd1dc);
+      font-family: 'Georgia', 'Gowun Dodum', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 52px;
+    }
+
+    a.back {
+      align-self: flex-start;
+      color: #c2185b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    a.back:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #c2185b;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.82rem;
+      color: #ad1457;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.8rem;
+    }
+
+    .content-row {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .map-wrap {
+      flex: 1;
+      min-width: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 32px rgba(194, 24, 91, 0.18);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+    }
+
+    #map {
+      width: 100%;
+      height: 480px;
+    }
+
+    /* Place list */
+    .place-list {
+      width: 196px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.52);
+      border-radius: 18px;
+      padding: 20px 16px;
+      box-shadow: 0 6px 32px rgba(194, 24, 91, 0.12);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .list-title {
+      font-size: 0.68rem;
+      color: #ad1457;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .place-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 6px;
+      border-radius: 10px;
+      transition: background 0.15s;
+    }
+
+    .place-item:hover {
+      background: rgba(194, 24, 91, 0.08);
+    }
+
+    .place-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 1px 4px rgba(49,27,146,0.2);
+    }
+
+    .place-info { flex: 1; min-width: 0; }
+
+    .place-name {
+      font-size: 0.78rem;
+      color: #3d006a;
+      font-weight: bold;
+      line-height: 1.3;
+      word-break: keep-all;
+    }
+
+    .place-count {
+      font-size: 0.68rem;
+      color: #7e57c2;
+      margin-top: 1px;
+    }
+
+    /* Legend */
+    .legend {
+      width: 100%;
+      max-width: 960px;
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .legend-label {
+      font-size: 0.72rem;
+      color: #880e4f;
+      letter-spacing: 0.04em;
+    }
+
+    .legend-bubbles {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-bubble {
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      display: inline-block;
+    }
+
+    /* Leaflet tooltip overrides */
+    .leaflet-tooltip {
+      background: rgba(49, 27, 146, 0.9) !important;
+      border: none !important;
+      border-radius: 10px !important;
+      color: #fff !important;
+      font-family: 'Georgia', serif !important;
+      font-size: 0.8rem !important;
+      padding: 7px 12px !important;
+      box-shadow: 0 3px 12px rgba(49,27,146,0.25) !important;
+      white-space: nowrap;
+    }
+
+    .leaflet-tooltip::before {
+      border-top-color: rgba(49, 27, 146, 0.9) !important;
+    }
+
+    .leaflet-tooltip .visits {
+      font-size: 0.72rem;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .tip-name { font-weight: bold; }
+    .tip-visits { font-size: 0.72rem; opacity: 0.85; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back">← My April</a>
+<h1>Places in April</h1>
+<p class="subtitle">서울대학교 캠퍼스 · 2026년 4월</p>
+
+<div class="content-row">
+  <div class="map-wrap">
+    <div id="map"></div>
+  </div>
+  <div class="place-list" id="placeList">
+    <div class="list-title">방문 장소</div>
+  </div>
+</div>
+
+<div class="legend">
+  <span class="legend-label">방문 횟수</span>
+  <div class="legend-bubbles" id="legendBubbles"></div>
+</div>
+
+<script>
+  const places = [
+    { name: '서울대학교 중앙도서관', lat: 37.4592419, lng: 126.952114,  visits: 16 },
+    { name: '교보문고 서울대점',     lat: 37.4591983, lng: 126.9507564, visits: 10 },
+    { name: '인문대 3동',           lat: 37.4606029, lng: 126.9536971, visits: 10 },
+    { name: '서울대입구역',          lat: 37.476568,  lng: 126.981649,  visits: 9  },
+    { name: '학생회관',              lat: 37.4592697, lng: 126.9505863, visits: 9  },
+    { name: '서울대 사회과학대학',   lat: 37.4633207, lng: 126.9510041, visits: 9  },
+  ];
+
+  const minV = Math.min(...places.map(p => p.visits));
+  const maxV = Math.max(...places.map(p => p.visits));
+
+  // light lavender (#d1c4e9) → deep indigo (#311b92)
+  const lR = 209, lG = 196, lB = 233;
+  const dR =  49, dG =  27, dB = 146;
+
+  function getColor(v) {
+    const t = (v - minV) / (maxV - minV);
+    const r = Math.round(lR + t * (dR - lR));
+    const g = Math.round(lG + t * (dG - lG));
+    const b = Math.round(lB + t * (dB - lB));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function getRadius(v) {
+    const t = (v - minV) / (maxV - minV);
+    return Math.round(16 + t * 22); // 16px (9회) → 38px (16회)
+  }
+
+  // Map
+  const map = L.map('map', { zoomControl: true }).setView([37.463, 126.958], 14);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  }).addTo(map);
+
+  // Markers
+  const markers = places.map(p => {
+    const color = getColor(p.visits);
+    const radius = getRadius(p.visits);
+
+    const circle = L.circleMarker([p.lat, p.lng], {
+      radius,
+      fillColor: color,
+      color: 'rgba(255,255,255,0.85)',
+      weight: 2,
+      fillOpacity: 0.82,
+    }).addTo(map);
+
+    circle.bindTooltip(
+      `<div class="tip-name">${p.name}</div><div class="tip-visits">${p.visits}회 방문</div>`,
+      { direction: 'top', offset: [0, -radius] }
+    );
+
+    return circle;
+  });
+
+  // Place list
+  const listEl = document.getElementById('placeList');
+  places.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'place-item';
+    item.style.cursor = 'pointer';
+
+    const dot = document.createElement('span');
+    dot.className = 'place-dot';
+    dot.style.background = getColor(p.visits);
+
+    const info = document.createElement('div');
+    info.className = 'place-info';
+    info.innerHTML = `<div class="place-name">${p.name}</div><div class="place-count">${p.visits}회 방문</div>`;
+
+    item.appendChild(dot);
+    item.appendChild(info);
+    item.addEventListener('click', () => {
+      map.flyTo([p.lat, p.lng], 17, { duration: 1.2 });
+      markers[i].openTooltip();
+    });
+    listEl.appendChild(item);
+  });
+
+  // Legend bubbles
+  const legendEl = document.getElementById('legendBubbles');
+  [minV, Math.round((minV + maxV) / 2), maxV].forEach(v => {
+    const size = getRadius(v) * 2;
+    const color = getColor(v);
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.alignItems = 'center';
+    wrap.style.gap = '3px';
+
+    const dot = document.createElement('span');
+    dot.className = 'legend-bubble';
+    dot.style.width  = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.background = color;
+
+    const lbl = document.createElement('span');
+    lbl.style.fontSize = '0.65rem';
+    lbl.style.color = '#880e4f';
+    lbl.textContent = v + '회';
+
+    wrap.appendChild(dot);
+    wrap.appendChild(lbl);
+    legendEl.appendChild(wrap);
+  });
+</script>
+
+</body>
+</html>

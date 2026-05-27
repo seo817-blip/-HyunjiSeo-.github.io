@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Instagram — My April</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0, #ffd1dc);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Gowun Dodum', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 0 60px;
+    }
+
+    a.back {
+      align-self: flex-start;
+      color: #c2185b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      padding-left: 20px;
+      letter-spacing: 0.04em;
+      font-family: 'Gowun Dodum', 'Georgia', serif;
+    }
+    a.back:hover { text-decoration: underline; }
+
+    /* ── Profile card ── */
+    .profile {
+      width: 100%;
+      max-width: 520px;
+      padding: 0 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .profile-top {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f48fb1, #c2185b);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      box-shadow: 0 0 0 3px white, 0 0 0 5px #f06292;
+    }
+
+    .profile-info { flex: 1; }
+
+    .username {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #5d0037;
+      margin-bottom: 10px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .stat-num {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #5d0037;
+    }
+
+    .stat-lbl {
+      font-size: 0.72rem;
+      color: #ad1457;
+    }
+
+    .bio {
+      font-size: 0.82rem;
+      color: #880e4f;
+      line-height: 1.6;
+      padding-left: 2px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      max-width: 520px;
+      height: 1px;
+      background: rgba(194,24,91,0.2);
+      margin-bottom: 3px;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      width: 100%;
+      max-width: 520px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+    }
+
+    .cell {
+      aspect-ratio: 1 / 1;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .cell-bg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.25s;
+    }
+
+    .cell:hover .cell-bg {
+      transform: scale(1.06);
+    }
+
+    /* day label — top-left */
+    .cell-day {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      z-index: 2;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* hover overlay */
+    .cell-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(93, 0, 40, 0.22);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .cell:hover .cell-overlay { opacity: 1; }
+
+    /* tooltip */
+    .cell::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 9px;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: rgba(88, 0, 44, 0.88);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .cell:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<a href="screentime.html" class="back">← Screentime</a>
+
+<div class="profile">
+  <div class="profile-top">
+    <div class="avatar">🌸</div>
+    <div class="profile-info">
+      <div class="username">my_april</div>
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-num">24</span>
+          <span class="stat-lbl">posts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">—</span>
+          <span class="stat-lbl">followers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">—</span>
+          <span class="stat-lbl">following</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bio">✦ April 2026<br>🎧 lofi · 🚶 walks · 📱 screentime</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  const data = [
+    { day:  7, min:  75 },
+    { day:  8, min:  46 },
+    { day:  9, min:  89 },
+    { day: 10, min:  72 },
+    { day: 11, min:  68 },
+    { day: 12, min: 152 },
+    { day: 13, min: 101 },
+    { day: 14, min:  89 },
+    { day: 15, min:  90 },
+    { day: 16, min: 149 },
+    { day: 17, min: 115 },
+    { day: 18, min: 150 },
+    { day: 19, min:  84 },
+    { day: 20, min: 107 },
+    { day: 21, min: 135 },
+    { day: 22, min:  95 },
+    { day: 23, min:  94 },
+    { day: 24, min:  95 },
+    { day: 25, min: 180 },
+    { day: 26, min:  97 },
+    { day: 27, min: 130 },
+    { day: 28, min:  92 },
+    { day: 29, min:  77 },
+    { day: 30, min:  15 },
+  ];
+
+  const minVal = Math.min(...data.map(d => d.min));
+  const maxVal = Math.max(...data.map(d => d.min));
+
+  // light pink (#fce4ec) → dark pink (#880e4f)
+  const lightR = 252, lightG = 228, lightB = 236;
+  const darkR  = 136, darkG  =  14, darkB  =  79;
+
+  function pinkColor(value) {
+    const t = (value - minVal) / (maxVal - minVal);
+    const r = Math.round(lightR + t * (darkR - lightR));
+    const g = Math.round(lightG + t * (darkG - lightG));
+    const b = Math.round(lightB + t * (darkB - lightB));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function formatTime(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return h > 0 ? `${h}시간 ${m}분` : `${m}분`;
+  }
+
+  const grid = document.getElementById('grid');
+
+  data.forEach(({ day, min }) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.setAttribute('data-tooltip', formatTime(min));
+
+    const bg = document.createElement('div');
+    bg.className = 'cell-bg';
+    bg.style.background = pinkColor(min);
+
+    const dayLabel = document.createElement('div');
+    dayLabel.className = 'cell-day';
+    dayLabel.textContent = day;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'cell-overlay';
+
+    cell.appendChild(bg);
+    cell.appendChild(dayLabel);
+    cell.appendChild(overlay);
+    grid.appendChild(cell);
+  });
+</script>
+
+</body>
+</html>

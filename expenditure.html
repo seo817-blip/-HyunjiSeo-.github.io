@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Expenditure — My April</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0, #ffd1dc);
+      font-family: 'Georgia', 'Gowun Dodum', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 20px 60px;
+    }
+
+    a.back {
+      align-self: flex-start;
+      color: #c2185b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    a.back:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #c2185b;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.78rem;
+      color: #ad1457;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Chart wrap ── */
+    .chart-outer {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(255,255,255,0.42);
+      border-radius: 20px;
+      padding: 28px 20px 0;
+      box-shadow: 0 6px 32px rgba(194,24,91,0.12);
+      border: 1.5px solid rgba(255,255,255,0.7);
+    }
+
+    .chart-inner {
+      width: 100%;
+      padding-left: 52px;
+      position: relative;
+    }
+
+    .chart-body {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 280px;
+    }
+
+    /* y-axis gridlines */
+    .gridlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .gridline {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: rgba(194,24,91,0.12);
+    }
+
+    .gridline-label {
+      position: absolute;
+      left: -52px;
+      font-size: 0.6rem;
+      color: #ad1457;
+      transform: translateY(50%);
+      white-space: nowrap;
+    }
+
+    /* bar columns */
+    .bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .bar {
+      width: 100%;
+      border-radius: 5px 5px 0 0;
+      transform-origin: bottom;
+      transform: scaleY(0);
+      animation: growUp 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      cursor: pointer;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 7px,
+        rgba(255,255,255,0.18) 7px,
+        rgba(255,255,255,0.18) 8px
+      );
+      box-shadow: 2px 0 8px rgba(0,0,0,0.08), inset -2px 0 6px rgba(0,0,0,0.06);
+    }
+
+    @keyframes growUp {
+      to { transform: scaleY(1); }
+    }
+
+    .bar-wrap:hover .bar {
+      filter: brightness(1.1);
+    }
+
+    /* tooltip */
+    .bar-wrap::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: rgba(93,0,37,0.88);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s, transform 0.15s;
+      z-index: 10;
+    }
+    .bar-wrap:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* x-axis */
+    .x-axis {
+      display: flex;
+      gap: 10px;
+      padding-left: 52px;
+      padding-top: 8px;
+      padding-bottom: 16px;
+    }
+
+    .x-label {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .x-cat {
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: #5d0037;
+      text-align: center;
+      word-break: keep-all;
+      line-height: 1.3;
+    }
+
+    /* ── Summary list ── */
+    .summary {
+      width: 100%;
+      max-width: 580px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 4px;
+      opacity: 0;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .s-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .s-name {
+      font-size: 0.78rem;
+      color: #5d0037;
+      width: 52px;
+      flex-shrink: 0;
+    }
+
+    .s-bar-wrap {
+      flex: 1;
+      height: 7px;
+      background: rgba(194,24,91,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .s-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: growRight 0.7s cubic-bezier(0.22,0.61,0.36,1) forwards;
+    }
+
+    @keyframes growRight { to { transform: scaleX(1); } }
+
+    .s-amount {
+      font-size: 0.72rem;
+      color: #880e4f;
+      font-weight: bold;
+      min-width: 80px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back">← My April</a>
+<h1>Expenditure</h1>
+<p class="subtitle">April 2026 · Total ₩1,013,708</p>
+
+<div class="chart-outer">
+  <div class="chart-inner">
+    <div class="chart-body" id="chartBody">
+      <div class="gridlines" id="gridlines"></div>
+    </div>
+  </div>
+  <div class="x-axis" id="xAxis"></div>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<script>
+  const cats = [
+    { name: '식비',   amount: 435124, color: '#ad1457' },
+    { name: '카페',   amount: 258590, color: '#c2185b' },
+    { name: '문화',   amount: 181494, color: '#e91e63' },
+    { name: '교통',   amount:  90000, color: '#f06292' },
+    { name: '선물',   amount:  29900, color: '#f48fb1' },
+    { name: '편의점', amount:  18600, color: '#f8bbd0' },
+  ];
+
+  const MAX_H  = 260;
+  const MAX_V  = cats[0].amount;
+
+  function fmt(n) {
+    return '₩' + n.toLocaleString('ko-KR');
+  }
+
+  /* gridlines */
+  const gridEl = document.getElementById('gridlines');
+  [100000, 200000, 300000, 400000].forEach(v => {
+    const bottom = (v / MAX_V) * MAX_H;
+
+    const line = document.createElement('div');
+    line.className = 'gridline';
+    line.style.bottom = bottom + 'px';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'gridline-label';
+    lbl.style.bottom = bottom + 'px';
+    lbl.textContent = (v / 10000) + '만';
+
+    gridEl.appendChild(line);
+    gridEl.appendChild(lbl);
+  });
+
+  /* bars */
+  const chartBody = document.getElementById('chartBody');
+  const xAxis     = document.getElementById('xAxis');
+
+  cats.forEach((c, i) => {
+    const h = Math.max(4, Math.round((c.amount / MAX_V) * MAX_H));
+
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    wrap.setAttribute('data-tooltip', `${c.name}  ${fmt(c.amount)}`);
+
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = h + 'px';
+    bar.style.backgroundColor = c.color;
+    bar.style.animationDelay = (i * 0.08) + 's';
+
+    wrap.appendChild(bar);
+    chartBody.appendChild(wrap);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'x-label';
+    lbl.innerHTML = `<span class="x-cat">${c.name}</span>`;
+    xAxis.appendChild(lbl);
+  });
+
+  /* summary rows */
+  const summaryEl = document.getElementById('summary');
+  cats.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    row.style.animationDelay = (0.6 + i * 0.07) + 's';
+
+    const pct = c.amount / MAX_V;
+
+    row.innerHTML = `
+      <span class="s-dot" style="background:${c.color};border:1px solid rgba(0,0,0,0.08)"></span>
+      <span class="s-name">${c.name}</span>
+      <div class="s-bar-wrap">
+        <div class="s-bar-fill" style="width:${pct*100}%;background:${c.color};animation-delay:${0.65+i*0.07}s"></div>
+      </div>
+      <span class="s-amount">${fmt(c.amount)}</span>
+    `;
+    summaryEl.appendChild(row);
+  });
+</script>
+
+</body>
+</html>
